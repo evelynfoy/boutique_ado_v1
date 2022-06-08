@@ -93,7 +93,21 @@ a.category-badge > span.badge:hover {
 .update-link,
 .remove-item {
     cursor: pointer;
-   
+}
+
+.message-container {
+    position: fixed;
+    top: 72px;
+    right: 15px;
+    z-index: 999999999999;
+}
+
+.custom-toast {
+    overflow: visible; 
+}
+
+.toast-capper {
+    height: 2px;
 }
 
 /* -------------------------------- Media Queries */
