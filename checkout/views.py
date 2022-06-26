@@ -1,5 +1,7 @@
 import json
-from django.shortcuts import render, redirect, reverse, get_object_or_404, HttpResponse
+from django.shortcuts import (
+    render, redirect, reverse, get_object_or_404, HttpResponse
+)
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.conf import settings
@@ -11,8 +13,6 @@ from profiles.forms import UserProfileForm
 from bag.contexts import bag_contents
 from .models import Order, OrderLineItem
 from .forms import OrderForm
-
-
 
 
 @require_POST
@@ -28,9 +28,8 @@ def cache_checkout_data(request):
         return HttpResponse(status=200)
     except Exception as e:
         messages.error(request, 'Sorry, your payment cannot be \
-            processed right now. Please try again later.' )
+            processed right now. Please try again later.')
         return HttpResponse(content=e, status=400)
-
 
 
 def checkout(request):
@@ -55,9 +54,8 @@ def checkout(request):
         order_form = OrderForm(form_data)
         if order_form.is_valid():
             order = order_form.save(commit=False)
-            order.original_bag = json.dumps(bag) 
+            order.original_bag = json.dumps(bag)
             order.stripe_pid = request.POST['client_secret'].split('_secret')[0]
-            # order.stripe_pid = request.POST.get('client_secret').split('_secret')[0]
             order.save()
             for item_id, item_data in bag.items():
                 try:
@@ -73,11 +71,11 @@ def checkout(request):
                     else:
                         for size, quantity in item_data['items_by_size'].items():
                             order_line_item = OrderLineItem(
-                            order=order,
-                            product=product,
-                            quantity=quantity,
-                            product_size=size,
-                        )
+                                                            order=order,
+                                                            product=product,
+                                                            quantity=quantity,
+                                                            product_size=size,
+                                                            )
                         order_line_item.save()
                 except Product.DoesNotExist:
                     messages.error(request, (
@@ -109,7 +107,7 @@ def checkout(request):
 
         if request.user.is_authenticated:
             try:
-                profile = UserProfile.objects.get(user=request.user) 
+                profile = UserProfile.objects.get(user=request.user)
                 order_form = OrderForm(initial={
                     'full_name': profile.user.get_full_name(),
                     'email': profile.user.email,
@@ -139,8 +137,9 @@ def checkout(request):
 
     return render(request, template, context)
 
+
 def checkout_success(request, order_number):
-    """ 
+    """
     Handle successful checkouts
     """
     save_info = request.session.get('save_info')
@@ -176,6 +175,5 @@ def checkout_success(request, order_number):
     context = {
         'order': order,
     }
-    
-    return render(request, template, context)
 
+    return render(request, template, context)
